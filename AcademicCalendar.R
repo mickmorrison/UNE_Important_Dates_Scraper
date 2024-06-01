@@ -60,15 +60,27 @@ generate_ics_content <- function(df) {
     return(event_content)
   }
   
-  events_content <- ""
+  events_content <- vector("character", nrow(df))  # Preallocate vector for efficiency
   for (i in 1:nrow(df)) {
-    event_str <- event_template(df$Day[i], df$Date[i], df$Event[i])
-    events_content <- paste(events_content, event_str, sep = "\n")
+    events_content[i] <- event_template(df$Day[i], df$Date[i], df$Event[i])
   }
   
+  events_content <- paste(events_content, collapse = "\n")  # Correctly concatenate all events
   ics_full_content <- paste(ics_start, events_content, ics_end, sep = "\n")
   return(ics_full_content)
 }
+
+# Generate the iCalendar content
+ics_content <- generate_ics_content(all_events_df)
+
+# Specify the file path (adjust the path as needed)
+ics_file_path <- "~/Downloads/academic_calendar.ics"
+
+# Write the content to the file
+writeLines(ics_content, con = ics_file_path)
+
+# Inform the user
+cat("iCalendar file has been generated at:", ics_file_path)
 
 # Generate the iCalendar content
 ics_content <- generate_ics_content(all_events_df)
